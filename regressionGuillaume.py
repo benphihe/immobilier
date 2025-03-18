@@ -36,13 +36,13 @@ mae = mean_absolute_error(y_test, y_pred)
 print("RMSE : ", rmse, "MAE : ", mae)
 
 plt.figure(figsize=(10, 6))
-plt.scatter(y_test, y_pred)
+plt.scatter(y_test, y_pred, alpha=0.5, label="Prédictions")
 plt.xlabel('True Values')
 plt.ylabel('Predictions')
 
 plt.xlim(0, 2.00e6)
 plt.ylim(0, 2.00e6)
 
-plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--')
+plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--', label="Ligne parfaite")
 
 plt.savefig('true_vs_predictedGuillaume.png')
