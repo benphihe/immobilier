@@ -66,6 +66,15 @@ y_pred = reg.predict(X_test)
 comparison = pd.DataFrame({'Réel': y_test[:10].values, 'Prédit': y_pred[:10]})
 print(comparison)
 
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, alpha=0.5, label="Prédictions")
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linestyle='--', label="Ligne parfaite")
+plt.xlabel("Valeurs réelles")
+plt.ylabel("Valeurs prédites")
+plt.title("Comparaison des valeurs réelles et prédites")
+plt.legend()
+plt.savefig('true_vs_predictedGuillaume.png')
+
 mse = mean_squared_error(y_test, y_pred)
 rmse = mse ** 0.5
 mae = mean_absolute_error(y_test, y_pred)
