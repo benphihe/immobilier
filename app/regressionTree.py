@@ -31,7 +31,7 @@ plt.barh(importances_sorted.index, importances_sorted)
 plt.title("Feature importances")
 plt.xlabel("Importance")
 plt.ylabel("Features")
-plt.savefig('feature_importances.png')
+# plt.savefig('feature_importances.png')
 
 y_train_pred = tree.predict(X_train)
 y_test_pred = tree.predict(X_test)
