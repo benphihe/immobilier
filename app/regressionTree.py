@@ -103,7 +103,7 @@ plt.ylim(0, 2.00e6)
 
 plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--')
 
-plt.savefig('true_vs_predicted_regressionTreeAfeterOpti.png')
+plt.show()
 
 
 

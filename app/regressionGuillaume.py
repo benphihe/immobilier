@@ -45,4 +45,4 @@ plt.ylim(0, 2.00e6)
 
 plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--', label="Ligne parfaite")
 
-plt.savefig('true_vs_predictedGuillaume.png')
+plt.show()
