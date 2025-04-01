@@ -11,6 +11,8 @@ from sklearn.metrics import median_absolute_error, r2_score, explained_variance_
 
 df = pd.read_csv("kc_house_data.csv")
 
+print(df.describe())
+
 df["price_per_sqft_living"] = df["price"] / df["sqft_living"]
 df["AsBeenRenovated"] = df["yr_renovated"].apply(lambda x: 0 if x == 0 else 1)
 df = df.drop(['date'], axis=1)
@@ -68,21 +70,36 @@ grid_tree.fit(X_train, y_train)
 
 print("Profondeur optimale:", grid_tree.best_params_['max_depth'])
 
+plt.figure(figsize=(10, 6))
+plt.plot(param_grid['max_depth'], np.sqrt(-grid_tree.cv_results_['mean_test_score']))
+plt.xlabel('Max Depth')
+plt.ylabel('RMSE')
+plt.title('Validation Curve')
+
+min_rmse = np.min(np.sqrt(-grid_tree.cv_results_['mean_test_score']))
+min_rmse_depth = grid_tree.best_params_['max_depth']
+
+plt.axhline(y=min_rmse, color='r', linestyle='--')
+plt.axvline(x=min_rmse_depth, color='r', linestyle='--')
+plt.savefig('validation_curve.png')
+
+plt.show()
+
 tree_optimal = DecisionTreeRegressor(max_depth=grid_tree.best_params_['max_depth'], random_state=42)
 tree_optimal.fit(X_train, y_train)
 
 y_train_pred = tree_optimal.predict(X_train)
 y_test_pred = tree_optimal.predict(X_test)
 
-train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
+train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred)) # RMSE : Root Mean Squared Error (Erreur quadratique moyenne)
 test_rmse = np.sqrt(mean_squared_error(y_test, y_test_pred))
-train_mae = mean_absolute_error(y_train, y_train_pred)
+train_mae = mean_absolute_error(y_train, y_train_pred) # MAE : Mean Absolute Error (Erreur absolue moyenne)
 test_mae = mean_absolute_error(y_test, y_test_pred)
-train_medae = median_absolute_error(y_train, y_train_pred)
+train_medae = median_absolute_error(y_train, y_train_pred) # MedAE : Median Absolute Error (Erreur absolue médiane)
 test_medae = median_absolute_error(y_test, y_test_pred)
-train_r2 = r2_score(y_train, y_train_pred)
+train_r2 = r2_score(y_train, y_train_pred) # R2 : Coefficient de détermination
 test_r2 = r2_score(y_test, y_test_pred)
-train_evs = explained_variance_score(y_train, y_train_pred)
+train_evs = explained_variance_score(y_train, y_train_pred) # EVS : Explained Variance Score (Score de variance expliquée)
 test_evs = explained_variance_score(y_test, y_test_pred)
 
 results = pd.DataFrame({

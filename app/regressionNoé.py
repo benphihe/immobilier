@@ -13,14 +13,14 @@ y = df['price']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state=42)
 
-reg = LinearRegression()
-reg.fit(X_train, y_train)
+reg = LinearRegression() # Creation d'un modele de regression lineaire
+reg.fit(X_train, y_train) # Entrainement du modele
 
-y_pred = reg.predict(X_test)
+y_pred = reg.predict(X_test) # Prediction des valeurs de test
 
-mse = mean_squared_error(y_test, y_pred)
-rmse = mse ** 0.5
-mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred) # Calcul de l'erreur quadratique moyenne
+rmse = mse ** 0.5 # Calcul de la racine de l'erreur quadratique moyenne
+mae = mean_absolute_error(y_test, y_pred) # Calcul de l'erreur absolue moyenne
 print("RMSE:", rmse, "MAE:", mae)
 
 plt.figure(figsize=(10, 6))
