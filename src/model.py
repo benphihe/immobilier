@@ -45,6 +45,3 @@ def main():
     analyzer = HouseDataAnalyzer('data/kc_house_data.csv')
     analyzer.load_and_prepare_data()
     # analyzer.visualize_data()
-
-if __name__ == "__main__":
-    main()
