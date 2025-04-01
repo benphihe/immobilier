@@ -3,24 +3,23 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, mean_absolute_error, accuracy_score, f1_score
 import pandas as pd
 import matplotlib.pyplot as plt
+from model import load_and_prepare_data
 
-df = pd.read_csv("kc_house_data.csv")
-df = df[df['price'] < df['price'].quantile(0.99)]
-df = df.drop(['date'], axis=1)
+df = load_and_prepare_data()
 
 X = df.drop('price', axis=1)
 y = df['price']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state=42)
 
-reg = LinearRegression() # Creation d'un modele de regression lineaire
-reg.fit(X_train, y_train) # Entrainement du modele
+reg = LinearRegression()
+reg.fit(X_train, y_train)
 
-y_pred = reg.predict(X_test) # Prediction des valeurs de test
+y_pred = reg.predict(X_test)
 
-mse = mean_squared_error(y_test, y_pred) # Calcul de l'erreur quadratique moyenne
-rmse = mse ** 0.5 # Calcul de la racine de l'erreur quadratique moyenne
-mae = mean_absolute_error(y_test, y_pred) # Calcul de l'erreur absolue moyenne
+mse = mean_squared_error(y_test, y_pred)
+rmse = mse ** 0.5
+mae = mean_absolute_error(y_test, y_pred)
 print("RMSE:", rmse, "MAE:", mae)
 
 plt.figure(figsize=(10, 6))

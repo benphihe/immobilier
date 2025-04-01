@@ -9,3 +9,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
+def main():
+    print("Hello World")
+    
+
+
+if __name__ == "__main__":
+    main()
