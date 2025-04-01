@@ -1,42 +1,47 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.metrics import mean_squared_error, mean_absolute_error, median_absolute_error, r2_score, explained_variance_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
-from .model import load_and_prepare_data
+from .model import HouseDataAnalyzer
+
+analyzer = HouseDataAnalyzer('data/kc_house_data.csv')
+analyzer.load_and_prepare_data()
 
 class RegressionTree:
     def __init__(self):
-        self.df = load_and_prepare_data()
+        self.df = analyzer.df
+
         self.x = self.df.drop("price", axis=1)
         self.y = self.df["price"]
 
-    def split_data(self):
+    def split_data(self, test_size=0.2, random_state=42):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-            self.x, self.y, test_size=0.2, random_state=42
+            self.x, self.y, test_size=test_size, random_state=random_state
         )
 
-    def train_initial_model(self):
-        self.tree = DecisionTreeRegressor(random_state=42)
+    def train_model(self, max_depth=None):
+        self.tree = DecisionTreeRegressor(max_depth=max_depth, random_state=42)
         self.tree.fit(self.X_train, self.y_train)
 
-    def evaluate_initial_model(self):
-        self.y_train_pred = self.tree.predict(self.X_train)
-        self.y_test_pred = self.tree.predict(self.X_test)
+    def evaluate_model(self, model=None):
+        if model is None:
+            model = self.tree
 
-        self.train_rmse = np.sqrt(mean_squared_error(self.y_train, self.y_train_pred))
-        self.test_rmse = np.sqrt(mean_squared_error(self.y_test, self.y_test_pred))
-        self.train_mae = mean_absolute_error(self.y_train, self.y_train_pred)
-        self.test_mae = mean_absolute_error(self.y_test, self.y_test_pred)
-        self.train_r2 = r2_score(self.y_train, self.y_train_pred)
-        self.test_r2 = r2_score(self.y_test, self.y_test_pred)
+        y_train_pred = model.predict(self.X_train)
+        y_test_pred = model.predict(self.X_test)
 
-        results = pd.DataFrame({
-            'Métrique': ['RMSE', 'MAE', 'R2'],
-            'Train': [self.train_rmse, self.train_mae, self.train_r2],
-            'Test': [self.test_rmse, self.test_mae, self.test_r2]
-        })
+        metrics = {
+            'Train RMSE': np.sqrt(mean_squared_error(self.y_train, y_train_pred)),
+            'Test RMSE': np.sqrt(mean_squared_error(self.y_test, y_test_pred)),
+            'Train MAE': mean_absolute_error(self.y_train, y_train_pred),
+            'Test MAE': mean_absolute_error(self.y_test, y_test_pred),
+            'Train R2': r2_score(self.y_train, y_train_pred),
+            'Test R2': r2_score(self.y_test, y_test_pred),
+        }
+
+        results = pd.DataFrame(metrics, index=['Value']).T
         print(results)
 
     def hyperparameter_tuning(self):
@@ -47,7 +52,6 @@ class RegressionTree:
         self.best_depth = grid_tree.best_params_['max_depth']
         print("Profondeur optimale:", self.best_depth)
 
-        # Visualisation de la courbe de validation
         plt.figure(figsize=(10, 6))
         plt.plot(param_grid['max_depth'], np.sqrt(-grid_tree.cv_results_['mean_test_score']))
         plt.xlabel('Max Depth')
@@ -59,44 +63,33 @@ class RegressionTree:
         plt.axvline(x=self.best_depth, color='r', linestyle='--')
         plt.show()
 
-    def train_optimal_model(self):
-        self.tree_optimal = DecisionTreeRegressor(max_depth=self.best_depth, random_state=42)
-        self.tree_optimal.fit(self.X_train, self.y_train)
+    def plot_predictions(self, model=None):
+        if model is None:
+            model = self.tree
 
-    def evaluate_optimal_model(self):
-        self.y_train_pred = self.tree_optimal.predict(self.X_train)
-        self.y_test_pred = self.tree_optimal.predict(self.X_test)
+        y_test_pred = model.predict(self.X_test)
 
-        self.train_rmse = np.sqrt(mean_squared_error(self.y_train, self.y_train_pred))
-        self.test_rmse = np.sqrt(mean_squared_error(self.y_test, self.y_test_pred))
-        self.train_mae = mean_absolute_error(self.y_train, self.y_train_pred)
-        self.test_mae = mean_absolute_error(self.y_test, self.y_test_pred)
-        self.train_r2 = r2_score(self.y_train, self.y_train_pred)
-        self.test_r2 = r2_score(self.y_test, self.y_test_pred)
-
-        results = pd.DataFrame({
-            'Métrique': ['RMSE', 'MAE', 'R2'],
-            'Train': [self.train_rmse, self.train_mae, self.train_r2],
-            'Test': [self.test_rmse, self.test_mae, self.test_r2]
-        })
-        print(results)
-
-    def plot_predictions(self):
         plt.figure(figsize=(10, 6))
-        plt.scatter(self.y_test, self.y_test_pred)
+        plt.scatter(self.y_test, y_test_pred)
         plt.xlabel('True Values')
         plt.ylabel('Predictions')
         plt.xlim(0, 2.00e6)
         plt.ylim(0, 2.00e6)
         plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--')
+        plt.title('True vs Predicted Values')
         plt.show()
 
     def run(self):
         self.split_data()
-        self.train_initial_model()
-        self.evaluate_initial_model()
-        self.plot_feature_importances()
+        print("Training initial model...")
+        self.train_model()
+        self.evaluate_model()
+
+        print("Performing hyperparameter tuning...")
         self.hyperparameter_tuning()
-        self.train_optimal_model()
-        self.evaluate_optimal_model()
+
+        print("Training optimal model...")
+        self.train_model(max_depth=self.best_depth)
+        self.evaluate_model()
         self.plot_predictions()
+
