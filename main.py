@@ -8,11 +8,16 @@ def main():
     print("2. Regression Tree")
     choice = input("Enter your choice (1 or 2): ")
 
+    test_size = 0.2
+    random_state = 42
+
     if choice == '1':
         regression = RegressionLinear()
+        regression.split_data(test_size, random_state)
         regression.run()
     elif choice == '2':
         regression = RegressionTree()
+        regression.split_data(test_size, random_state)
         regression.run()
     else:
         print("Invalid choice. Please enter 1 or 2.")

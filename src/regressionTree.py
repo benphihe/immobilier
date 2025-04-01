@@ -16,7 +16,7 @@ class RegressionTree:
         self.x = self.df.drop("price", axis=1)
         self.y = self.df["price"]
 
-    def split_data(self, test_size=0.2, random_state=42):
+    def split_data(self, test_size, random_state):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.x, self.y, test_size=test_size, random_state=random_state
         )
@@ -24,6 +24,9 @@ class RegressionTree:
     def train_model(self, max_depth=None):
         self.tree = DecisionTreeRegressor(max_depth=max_depth, random_state=42)
         self.tree.fit(self.X_train, self.y_train)
+
+    def predict(self):
+        self.y_pred = self.tree.predict(self.X_test)
 
     def evaluate_model(self, model=None):
         if model is None:
@@ -80,9 +83,8 @@ class RegressionTree:
         plt.show()
 
     def run(self):
-        self.split_data()
-        print("Training initial model...")
         self.train_model()
+        self.predict()
         self.evaluate_model()
 
         print("Performing hyperparameter tuning...")

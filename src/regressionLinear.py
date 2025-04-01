@@ -16,7 +16,7 @@ class RegressionLinear:
         self.x = self.df.drop("price", axis=1)
         self.y = self.df["price"]
 
-    def split_data(self, test_size=0.2, random_state=42):
+    def split_data(self, test_size, random_state):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.x, self.y, test_size=test_size, random_state=random_state
         )
@@ -55,10 +55,6 @@ class RegressionLinear:
         plt.show()
 
     def run(self):
-
-        print("Splitting data...")
-        self.split_data()
-
         print("Training linear regression model...")
         self.linear_regression()
 
