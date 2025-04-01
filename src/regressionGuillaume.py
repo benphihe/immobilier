@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from .model import load_and_prepare_data
 
-class regressionGuillaume:
+class RegressionGuillaume:
     def __init__(self):
         self.df = load_and_prepare_data()
         self.x = self.df.drop("price", axis=1)

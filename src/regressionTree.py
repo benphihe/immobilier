@@ -6,110 +6,97 @@ from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 from .model import load_and_prepare_data
 
-def main():
-    # Étape 1 : Chargement et préparation des données
-    df = load_and_prepare_data()
-    X = df.drop("price", axis=1)
-    y = df["price"]
+class RegressionTree:
+    def __init__(self):
+        self.df = load_and_prepare_data()
+        self.x = self.df.drop("price", axis=1)
+        self.y = self.df["price"]
 
-    # Étape 2 : Division des données en ensembles d'entraînement et de test
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    def split_data(self):
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+            self.x, self.y, test_size=0.2, random_state=42
+        )
 
-    # Étape 3 : Entraînement initial du modèle
-    tree = DecisionTreeRegressor(random_state=42)
-    tree.fit(X_train, y_train)
+    def train_initial_model(self):
+        self.tree = DecisionTreeRegressor(random_state=42)
+        self.tree.fit(self.X_train, self.y_train)
 
-    # Étape 4 : Visualisation des importances des caractéristiques
-    importances = pd.Series(tree.feature_importances_, index=X_train.columns)
-    importances_sorted = importances.sort_values()
-    plt.barh(importances_sorted.index, importances_sorted)
-    plt.title("Feature Importances")
-    plt.xlabel("Importance")
-    plt.ylabel("Features")
-    plt.savefig('feature_importances.png')
-    plt.show()
+    def evaluate_initial_model(self):
+        self.y_train_pred = self.tree.predict(self.X_train)
+        self.y_test_pred = self.tree.predict(self.X_test)
 
-    # Étape 5 : Évaluation initiale du modèle
-    y_train_pred = tree.predict(X_train)
-    y_test_pred = tree.predict(X_test)
+        self.train_rmse = np.sqrt(mean_squared_error(self.y_train, self.y_train_pred))
+        self.test_rmse = np.sqrt(mean_squared_error(self.y_test, self.y_test_pred))
+        self.train_mae = mean_absolute_error(self.y_train, self.y_train_pred)
+        self.test_mae = mean_absolute_error(self.y_test, self.y_test_pred)
+        self.train_r2 = r2_score(self.y_train, self.y_train_pred)
+        self.test_r2 = r2_score(self.y_test, self.y_test_pred)
 
-    train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
-    test_rmse = np.sqrt(mean_squared_error(y_test, y_test_pred))
-    train_mae = mean_absolute_error(y_train, y_train_pred)
-    test_mae = mean_absolute_error(y_test, y_test_pred)
-    train_medae = median_absolute_error(y_train, y_train_pred)
-    test_medae = median_absolute_error(y_test, y_test_pred)
-    train_r2 = r2_score(y_train, y_train_pred)
-    test_r2 = r2_score(y_test, y_test_pred)
-    train_evs = explained_variance_score(y_train, y_train_pred)
-    test_evs = explained_variance_score(y_test, y_test_pred)
+        results = pd.DataFrame({
+            'Métrique': ['RMSE', 'MAE', 'R2'],
+            'Train': [self.train_rmse, self.train_mae, self.train_r2],
+            'Test': [self.test_rmse, self.test_mae, self.test_r2]
+        })
+        print(results)
 
-    results = pd.DataFrame({
-        'Métrique': ['RMSE', 'MAE', 'MedAE', 'R2', 'EVS'],
-        'Train': [train_rmse, train_mae, train_medae, train_r2, train_evs],
-        'Test': [test_rmse, test_mae, test_medae, test_r2, test_evs]
-    })
-    print(results)
+    def hyperparameter_tuning(self):
+        param_grid = {'max_depth': np.arange(1, 21)}
+        grid_tree = GridSearchCV(self.tree, param_grid, cv=5, scoring='neg_mean_squared_error')
+        grid_tree.fit(self.X_train, self.y_train)
 
-    # Étape 6 : Recherche des hyperparamètres optimaux
-    param_grid = {'max_depth': np.arange(1, 21)}
-    grid_tree = GridSearchCV(tree, param_grid, cv=5, scoring='neg_mean_squared_error')
-    grid_tree.fit(X_train, y_train)
+        self.best_depth = grid_tree.best_params_['max_depth']
+        print("Profondeur optimale:", self.best_depth)
 
-    print("Profondeur optimale:", grid_tree.best_params_['max_depth'])
+        # Visualisation de la courbe de validation
+        plt.figure(figsize=(10, 6))
+        plt.plot(param_grid['max_depth'], np.sqrt(-grid_tree.cv_results_['mean_test_score']))
+        plt.xlabel('Max Depth')
+        plt.ylabel('RMSE')
+        plt.title('Validation Curve')
 
-    # Visualisation de la courbe de validation
-    plt.figure(figsize=(10, 6))
-    plt.plot(param_grid['max_depth'], np.sqrt(-grid_tree.cv_results_['mean_test_score']))
-    plt.xlabel('Max Depth')
-    plt.ylabel('RMSE')
-    plt.title('Validation Curve')
+        min_rmse = np.min(np.sqrt(-grid_tree.cv_results_['mean_test_score']))
+        plt.axhline(y=min_rmse, color='r', linestyle='--')
+        plt.axvline(x=self.best_depth, color='r', linestyle='--')
+        plt.show()
 
-    min_rmse = np.min(np.sqrt(-grid_tree.cv_results_['mean_test_score']))
-    min_rmse_depth = grid_tree.best_params_['max_depth']
+    def train_optimal_model(self):
+        self.tree_optimal = DecisionTreeRegressor(max_depth=self.best_depth, random_state=42)
+        self.tree_optimal.fit(self.X_train, self.y_train)
 
-    plt.axhline(y=min_rmse, color='r', linestyle='--')
-    plt.axvline(x=min_rmse_depth, color='r', linestyle='--')
-    plt.savefig('validation_curve.png')
-    plt.show()
+    def evaluate_optimal_model(self):
+        self.y_train_pred = self.tree_optimal.predict(self.X_train)
+        self.y_test_pred = self.tree_optimal.predict(self.X_test)
 
-    # Étape 7 : Entraînement du modèle optimal
-    tree_optimal = DecisionTreeRegressor(max_depth=grid_tree.best_params_['max_depth'], random_state=42)
-    tree_optimal.fit(X_train, y_train)
+        self.train_rmse = np.sqrt(mean_squared_error(self.y_train, self.y_train_pred))
+        self.test_rmse = np.sqrt(mean_squared_error(self.y_test, self.y_test_pred))
+        self.train_mae = mean_absolute_error(self.y_train, self.y_train_pred)
+        self.test_mae = mean_absolute_error(self.y_test, self.y_test_pred)
+        self.train_r2 = r2_score(self.y_train, self.y_train_pred)
+        self.test_r2 = r2_score(self.y_test, self.y_test_pred)
 
-    # Évaluation du modèle optimal
-    y_train_pred = tree_optimal.predict(X_train)
-    y_test_pred = tree_optimal.predict(X_test)
+        results = pd.DataFrame({
+            'Métrique': ['RMSE', 'MAE', 'R2'],
+            'Train': [self.train_rmse, self.train_mae, self.train_r2],
+            'Test': [self.test_rmse, self.test_mae, self.test_r2]
+        })
+        print(results)
 
-    train_rmse = np.sqrt(mean_squared_error(y_train, y_train_pred))
-    test_rmse = np.sqrt(mean_squared_error(y_test, y_test_pred))
-    train_mae = mean_absolute_error(y_train, y_train_pred)
-    test_mae = mean_absolute_error(y_test, y_test_pred)
-    train_medae = median_absolute_error(y_train, y_train_pred)
-    test_medae = median_absolute_error(y_test, y_test_pred)
-    train_r2 = r2_score(y_train, y_train_pred)
-    test_r2 = r2_score(y_test, y_test_pred)
-    train_evs = explained_variance_score(y_train, y_train_pred)
-    test_evs = explained_variance_score(y_test, y_test_pred)
+    def plot_predictions(self):
+        plt.figure(figsize=(10, 6))
+        plt.scatter(self.y_test, self.y_test_pred)
+        plt.xlabel('True Values')
+        plt.ylabel('Predictions')
+        plt.xlim(0, 2.00e6)
+        plt.ylim(0, 2.00e6)
+        plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--')
+        plt.show()
 
-    results = pd.DataFrame({
-        'Métrique': ['RMSE', 'MAE', 'MedAE', 'R2', 'EVS'],
-        'Train': [train_rmse, train_mae, train_medae, train_r2, train_evs],
-        'Test': [test_rmse, test_mae, test_medae, test_r2, test_evs]
-    })
-    print(results)
-
-    # Visualisation des prédictions
-    plt.figure(figsize=(10, 6))
-    plt.scatter(y_test, y_test_pred)
-    plt.xlabel('True Values')
-    plt.ylabel('Predictions')
-    plt.xlim(0, 2.00e6)
-    plt.ylim(0, 2.00e6)
-    plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--')
-    plt.savefig('predictions_scatter.png')
-    plt.show()
-
-# Point d'entrée du script
-if __name__ == "__main__":
-    main()
+    def run(self):
+        self.split_data()
+        self.train_initial_model()
+        self.evaluate_initial_model()
+        self.plot_feature_importances()
+        self.hyperparameter_tuning()
+        self.train_optimal_model()
+        self.evaluate_optimal_model()
+        self.plot_predictions()
