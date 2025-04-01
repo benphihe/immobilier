@@ -4,41 +4,52 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from model import load_and_prepare_data
+from .model import load_and_prepare_data
 
+class RegressionGuillaume:
+    def __init__(self):
+        self.df = load_and_prepare_data()
+        self.x = self.df.drop("price", axis=1)
+        self.y = self.df["price"]
+    
+    def column_transform(self):
+        for col in self.x.select_dtypes(include=['object']).columns:
+            if col == 'date':  
+                self.x[col] = pd.to_datetime(self.x[col]).astype(int) / 10**9 
+            else:
+                le = LabelEncoder()
+                self.x[col] = le.fit_transform(self.x[col])
 
-df = load_and_prepare_data()
+    def split_data(self):
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.x, self.y, test_size=0.2, random_state=42)
 
-X = df.drop("price", axis=1)
-y = df["price"]
+    def linear_regression(self):
+        reg = LinearRegression()
+        reg.fit(self.X_train, self.y_train)
 
-for col in X.select_dtypes(include=['object']).columns:
-    if col == 'date':  
-        X[col] = pd.to_datetime(X[col]).astype(int) / 10**9 
-    else:
-        le = LabelEncoder()
-        X[col] = le.fit_transform(X[col])
+        self.y_pred = reg.predict(self.X_test)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        self.mse = mean_squared_error(self.y_test, self.y_pred)
+        self.rmse = self.mse ** 0.5
+        self.mae = mean_absolute_error(self.y_test, self.y_pred)
+        print("RMSE : ", self.rmse, "MAE : ", self.mae)
 
-reg = LinearRegression()
-reg.fit(X_train, y_train)
+    def plot(self):
+        plt.figure(figsize=(10, 6))
+        plt.scatter(self.y_test, self.y_pred, alpha=0.5, label="Prédictions")
+        plt.xlabel('True Values')
+        plt.ylabel('Predictions')
 
-y_pred = reg.predict(X_test)
+        plt.xlim(0, 2.00e6)
+        plt.ylim(0, 2.00e6)
 
-mse = mean_squared_error(y_test, y_pred)
-rmse = mse ** 0.5
-mae = mean_absolute_error(y_test, y_pred)
-print("RMSE : ", rmse, "MAE : ", mae)
+        plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--', label="Ligne parfaite")
 
-plt.figure(figsize=(10, 6))
-plt.scatter(y_test, y_pred, alpha=0.5, label="Prédictions")
-plt.xlabel('True Values')
-plt.ylabel('Predictions')
+        plt.show()
 
-plt.xlim(0, 2.00e6)
-plt.ylim(0, 2.00e6)
+    def run(self):
+        self.column_transform()
+        self.split_data()
+        self.linear_regression()
+        self.plot()
 
-plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--', label="Ligne parfaite")
-
-plt.show()
