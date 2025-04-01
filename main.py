@@ -1,10 +1,18 @@
 import sys
 import pandas as pd
-import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+from ydata_profiling import ProfileReport
 
-# Change to the directory where the script is located
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-df = pd.read_csv("kc_house_data.csv")
-print("Dimensions : ", df.shape)
-print(df.head(100))
+def main():
+    # Load the dataset
+    df = pd.read_csv("kc_house_data.csv")
+
+    
+
+
+
+
+if __name__ == "__main__":
+    main()
