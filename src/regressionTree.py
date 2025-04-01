@@ -4,7 +4,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, median_absolute_error, r2_score, explained_variance_score
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
-from model import load_and_prepare_data
+from .model import load_and_prepare_data
 
 def main():
     # Étape 1 : Chargement et préparation des données
