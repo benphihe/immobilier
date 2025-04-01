@@ -4,12 +4,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from .model import HouseDataAnalyzer
+from .processor_imo import HouseDataAnalyzer
 
 analyzer = HouseDataAnalyzer('data/kc_house_data.csv')
 analyzer.load_and_prepare_data()
 
-class RegressionGuillaume:
+class RegressionLinear:
     def __init__(self):
         self.df = analyzer.df
 
@@ -21,17 +21,24 @@ class RegressionGuillaume:
             self.x, self.y, test_size=test_size, random_state=random_state
         )
 
-    def linear_regression(self):
+    def train_model(self):
         self.reg = LinearRegression()
         self.reg.fit(self.X_train, self.y_train)
 
+    def predict(self):
         self.y_pred = self.reg.predict(self.X_test)
 
+    def evaluate_model(self):
         self.mse = mean_squared_error(self.y_test, self.y_pred)
         self.rmse = self.mse ** 0.5
         self.mae = mean_absolute_error(self.y_test, self.y_pred)
 
         print("RMSE : ", self.rmse, "MAE : ", self.mae)
+
+    def linear_regression(self):
+        self.train_model()
+        self.predict()
+        self.evaluate_model()
 
     def plot(self):
         plt.figure(figsize=(10, 6))
@@ -48,8 +55,6 @@ class RegressionGuillaume:
         plt.show()
 
     def run(self):
-        print("Transforming columns...")
-        self.column_transform()
 
         print("Splitting data...")
         self.split_data()

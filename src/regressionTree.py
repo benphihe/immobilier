@@ -4,7 +4,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from sklearn.tree import DecisionTreeRegressor
 import numpy as np
-from .model import HouseDataAnalyzer
+from .processor_imo import HouseDataAnalyzer
 
 analyzer = HouseDataAnalyzer('data/kc_house_data.csv')
 analyzer.load_and_prepare_data()
