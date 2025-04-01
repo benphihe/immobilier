@@ -4,14 +4,10 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, mean_absolute_error
+from model import load_and_prepare_data
 
 
-df = pd.read_csv("kc_house_data.csv")
-
-df["price_per_sqft_living"] = df["price"] / df["sqft_living"]
-df["AsBeenRenovated"] = df["yr_renovated"].apply(lambda x: 0 if x == 0 else 1)
-
-df = df[df['price'] < df['price'].quantile(0.99)]
+df = load_and_prepare_data()
 
 X = df.drop("price", axis=1)
 y = df["price"]
