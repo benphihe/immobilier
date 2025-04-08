@@ -34,7 +34,11 @@ L'objectif de ce projet est de construire un modèle de machine learning capable
    - Identification des relations entre les caractéristiques et la cible (`price`).
 
 2. **Préparation des données** :
-   - Nettoyage des données (suppression des valeurs aberrantes, encodage des variables catégorielles, etc.).
+   - Nettoyage des données (suppression des valeurs aberrantes uniquement si le dataset contient plus de 100 lignes).
+   - Ajout de nouvelles colonnes dérivées :
+     - `price_per_sqft_living` : Prix par surface habitable.
+     - `AsBeenRenovated` : Indique si la maison a été rénovée.
+   - Suppression de colonnes inutiles comme `date`.
    - Division des données en ensembles d'entraînement et de test.
 
 3. **Modélisation** :
@@ -51,6 +55,46 @@ L'objectif de ce projet est de construire un modèle de machine learning capable
 
 ---
 
+## Fonctionnalités de l'API
+### Endpoint `/predict`
+Cet endpoint permet de prédire le prix d'une maison en fonction des caractéristiques fournies.
+
+#### Exemple de données d'entrée :
+```json
+{
+  "id": 987654321,
+  "date": "2025-04-08",
+  "price": 750000,
+  "bedrooms": 4,
+  "bathrooms": 3.0,
+  "sqft_living": 3000,
+  "sqft_lot": 6000,
+  "floors": 2,
+  "waterfront": 1,
+  "view": 2,
+  "condition": 4,
+  "grade": 8,
+  "sqft_above": 2500,
+  "sqft_basement": 500,
+  "yr_built": 2010,
+  "yr_renovated": 2020,
+  "zipcode": 98052,
+  "lat": 47.6396,
+  "long": -122.128,
+  "sqft_living15": 2800,
+  "sqft_lot15": 5000
+}
+```
+
+#### Exemple de réponse :
+```json
+{
+  "predicted_price": 800000
+}
+```
+
+---
+
 ## Résultats attendus
 - Construire un modèle performant avec une erreur minimale sur l'ensemble de test.
 - Comparer les performances des différents modèles pour sélectionner le plus adapté.
@@ -60,36 +104,38 @@ L'objectif de ce projet est de construire un modèle de machine learning capable
 ## Conclusion
 Ce projet vise à fournir une solution robuste pour prédire le prix des maisons en utilisant des techniques de machine learning. Les résultats obtenus permettront de mieux comprendre les facteurs influençant les prix immobiliers et d'améliorer les prédictions pour des applications réelles.
 
-### Exemple de commande CURL
+---
+
+## Exemple de commande CURL
 
 ```bash
 curl -X 'POST' \
-  'http://127.0.0.1:8000/predict' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "id": 123456789,
-  "date": "2025-04-08",
-  "price": 450000,
-  "bedrooms": 3,
-  "bathrooms": 2.5,
-  "sqft_living": 2000,
-  "sqft_lot": 5000,
-  "floors": 2,
-  "waterfront": 0,
-  "view": 1,
-  "condition": 3,
-  "grade": 7,
-  "sqft_above": 1800,
-  "sqft_basement": 200,
-  "yr_built": 1995,
-  "yr_renovated": 2010,
-  "zipcode": 98178,
-  "lat": 47.5112,
-  "long": -122.257,
-  "sqft_living15": 1500,
-  "sqft_lot15": 4000
+'http://127.0.0.1:8000/predict' \
+-H 'accept: application/json' \
+-H 'Content-Type: application/json' \
+-d '{
+"id": 987654321,
+"date": "2025-04-08",
+"price": 750000,
+"bedrooms": 4,
+"bathrooms": 3.0,
+"sqft_living": 3000,
+"sqft_lot": 6000,
+"floors": 2,
+"waterfront": 1,
+"view": 2,
+"condition": 4,
+"grade": 8,
+"sqft_above": 2500,
+"sqft_basement": 500,
+"yr_built": 2010,
+"yr_renovated": 2020,
+"zipcode": 98052,
+"lat": 47.6396,
+"long": -122.128,
+"sqft_living15": 2800,
+"sqft_lot15": 5000
 }'
 ```
 
-Cette commande envoie une requête POST à une API de prédiction avec des caractéristiques d'une maison pour obtenir une estimation du prix.
+Cette commande envoie une requête POST à l'API pour prédire le prix d'une maison en fonction des caractéristiques fournies.
