@@ -28,6 +28,58 @@ L'objectif de ce projet est de construire un modèle de machine learning capable
 
 ---
 
+## Prérequis
+Avant de lancer le projet, assurez-vous d'avoir les éléments suivants installés sur votre machine :
+- **Python 3.10 ou supérieur**
+- **pip** (gestionnaire de paquets Python)
+- **Virtualenv** (optionnel mais recommandé)
+
+### Installation des dépendances
+1. Clonez le dépôt du projet :
+   ```bash
+   git clone https://github.com/benphihe/immobilier.git
+   cd immobilier
+   ```
+
+2. Créez un environnement virtuel (optionnel mais recommandé) :
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   ```
+
+3. Installez les dépendances nécessaires :
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## Comment lancer le projet
+1. Assurez-vous que le fichier `kc_house_data.csv` est présent dans le dossier `data/` :
+   ```
+   immobilier/
+   ├── app.py
+   ├── main.py
+   ├── data/
+   │   └── kc_house_data.csv
+   ├── src/
+   │   ├── processor_imo.py
+   │   ├── regressionTree.py
+   │   └── ...
+   ├── tests/
+   └── README.md
+   ```
+
+2. Lancez le serveur FastAPI :
+   ```bash
+   uvicorn app:app --reload
+   ```
+
+3. Accédez à la documentation interactive de l'API :
+   - Ouvrez votre navigateur et allez sur [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+---
+
 ## Méthodologie
 1. **Exploration des données** :
    - Analyse des distributions des variables.
