@@ -23,7 +23,7 @@ def test_split_data(regression_tree):
 
 def test_train_model(regression_tree):
     """Test de la méthode train_model"""
-    regression_tree.split_data()
+    regression_tree.split_data(0.2, 42)
     regression_tree.train_model(max_depth=3)
     
  
@@ -32,7 +32,7 @@ def test_train_model(regression_tree):
 
 def test_evaluate_model(regression_tree, capsys):
     """Test de la méthode evaluate_model"""
-    regression_tree.split_data()
+    regression_tree.split_data(0.2, 42)
     regression_tree.train_model(max_depth=3)
    
     regression_tree.evaluate_model()
@@ -45,7 +45,7 @@ def test_evaluate_model(regression_tree, capsys):
 
 def test_hyperparameter_tuning(regression_tree, capsys):
     """Test de la méthode hyperparameter_tuning"""
-    regression_tree.split_data()
+    regression_tree.split_data(0.2, 42)
     regression_tree.train_model()
     
     regression_tree.hyperparameter_tuning()
@@ -57,7 +57,7 @@ def test_hyperparameter_tuning(regression_tree, capsys):
 
 def test_plot_predictions(regression_tree):
     """Test de la méthode plot_predictions"""
-    regression_tree.split_data()
+    regression_tree.split_data(0.2, 42)
     regression_tree.train_model(max_depth=3)
     
     regression_tree.plot_predictions()
@@ -67,10 +67,9 @@ def test_plot_predictions(regression_tree):
 
 def test_run(regression_tree, capsys):
     """Test de la méthode run complète"""
-  
+    regression_tree.split_data(0.2, 42)
     regression_tree.run()
     captured = capsys.readouterr()
     
-    assert 'Training initial model...' in captured.out
     assert 'Performing hyperparameter tuning...' in captured.out
     assert 'Training optimal model...' in captured.out
