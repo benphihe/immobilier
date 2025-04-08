@@ -10,16 +10,16 @@ analyzer = HouseDataAnalyzer('../data/kc_house_data.csv')
 analyzer.load_and_prepare_data()
 
 class RegressionTree:
-    def __init__(self):
+    def __init__(self, show_plots=True):
         self.df = analyzer.df
-
+        self.show_plots = show_plots
         self.x = self.df.drop("price", axis=1)
         self.y = self.df["price"]
 
     def split_data(self, test_size, random_state):
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
             self.x, self.y, test_size=test_size, random_state=random_state
-        )
+        )  
 
     def train_model(self, max_depth=None):
         self.tree = DecisionTreeRegressor(max_depth=max_depth, random_state=42)
@@ -64,7 +64,8 @@ class RegressionTree:
         min_rmse = np.min(np.sqrt(-grid_tree.cv_results_['mean_test_score']))
         plt.axhline(y=min_rmse, color='r', linestyle='--')
         plt.axvline(x=self.best_depth, color='r', linestyle='--')
-        plt.show()
+        if self.show_plots:
+            plt.show()
 
     def plot_predictions(self, model=None):
         if model is None:
@@ -80,7 +81,8 @@ class RegressionTree:
         plt.ylim(0, 2.00e6)
         plt.plot([0, 2.00e6], [0, 2.00e6], color='red', linestyle='--')
         plt.title('True vs Predicted Values')
-        plt.show()
+        if self.show_plots:
+            plt.show()
 
     def run(self):
         self.train_model()
