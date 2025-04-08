@@ -13,7 +13,9 @@ class HouseDataAnalyzer:
         self.df["price_per_sqft_living"] = self.df["price"] / self.df["sqft_living"]
         self.df["AsBeenRenovated"] = self.df["yr_renovated"].apply(lambda x: 0 if x == 0 else 1)
         self.df = self.df.drop(['date'], axis=1)
-        self.df = self.df[self.df['price'] < self.df['price'].quantile(0.99)]
+        if len(self.df) > 100:
+            self.df = self.df[self.df['price'] < self.df['price'].quantile(0.99)]
+        return self.df
 
     def visualize_data(self):
         if self.df is None:
