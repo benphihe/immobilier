@@ -5,7 +5,7 @@ import pytest
 @pytest.fixture
 def regression():
     reg = RegressionLinear()
-    reg.split_data()
+    reg.split_data(0.2, 42)
     return reg
 
 def test_split_data(regression):
@@ -34,6 +34,7 @@ def test_evaluate_model(regression):
 
 def test_run():
     regression = RegressionLinear()
+    regression.split_data(0.2, 42)
     regression.run()
     assert regression.reg is not None, "le modèle n'a pas été entrainé correctement"
     assert len(regression.y_pred) == len(regression.y_test), "y_pred n'est pas égal a y_test"
