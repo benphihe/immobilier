@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 from .processor_imo import HouseDataAnalyzer
 
-analyzer = HouseDataAnalyzer('data/kc_house_data.csv')
+analyzer = HouseDataAnalyzer('../data/kc_house_data.csv')
 analyzer.load_and_prepare_data()
 
 class RegressionTree:

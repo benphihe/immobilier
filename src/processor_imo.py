@@ -42,6 +42,6 @@ class HouseDataAnalyzer:
         plt.show()
 
 def main():
-    analyzer = HouseDataAnalyzer('data/kc_house_data.csv')
+    analyzer = HouseDataAnalyzer('../data/kc_house_data.csv')
     analyzer.load_and_prepare_data()
     # analyzer.visualize_data()
