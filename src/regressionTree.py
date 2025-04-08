@@ -25,8 +25,11 @@ class RegressionTree:
         self.tree = DecisionTreeRegressor(max_depth=max_depth, random_state=42)
         self.tree.fit(self.X_train, self.y_train)
 
-    def predict(self):
-        self.y_pred = self.tree.predict(self.X_test)
+    def predict(self, X_test=None):
+        if X_test is None:
+            self.y_pred = self.tree.predict(self.X_test)
+        else:
+            self.y_pred = self.tree.predict(X_test)
         return self.y_pred
 
     def evaluate_model(self, model=None):

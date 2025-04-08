@@ -57,6 +57,12 @@ L'objectif de ce projet est de construire un modèle de machine learning capable
 
 ---
 
+## Conclusion
+Ce projet vise à fournir une solution robuste pour prédire le prix des maisons en utilisant des techniques de machine learning. Les résultats obtenus permettront de mieux comprendre les facteurs influençant les prix immobiliers et d'améliorer les prédictions pour des applications réelles.
+
+### Exemple de commande CURL
+
+```bash
 curl -X 'POST' \
   'http://127.0.0.1:8000/predict' \
   -H 'accept: application/json' \
@@ -84,6 +90,6 @@ curl -X 'POST' \
   "sqft_living15": 1500,
   "sqft_lot15": 4000
 }'
+```
 
-## Conclusion
-Ce projet vise à fournir une solution robuste pour prédire le prix des maisons en utilisant des techniques de machine learning. Les résultats obtenus permettront de mieux comprendre les facteurs influençant les prix immobiliers et d'améliorer les prédictions pour des applications réelles.
+Cette commande envoie une requête POST à une API de prédiction avec des caractéristiques d'une maison pour obtenir une estimation du prix.

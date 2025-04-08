@@ -37,7 +37,7 @@ class HouseData(BaseModel):
 def predict_price(house_data: HouseData):
     data = pd.DataFrame([house_data.dict()])
     df = HouseDataAnalyzer(df=data).load_and_prepare_data()
-    prediction = model.tree.predict(df.drop(columns=['id', 'price']))
+    prediction = model.predict(X_test=df.drop("price", axis=1))
     return {"predicted_price": prediction[0]}
 
 
