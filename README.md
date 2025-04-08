@@ -57,5 +57,33 @@ L'objectif de ce projet est de construire un modèle de machine learning capable
 
 ---
 
+curl -X 'POST' \
+  'http://127.0.0.1:8000/predict' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "id": 123456789,
+  "date": "2025-04-08",
+  "price": 450000,
+  "bedrooms": 3,
+  "bathrooms": 2.5,
+  "sqft_living": 2000,
+  "sqft_lot": 5000,
+  "floors": 2,
+  "waterfront": 0,
+  "view": 1,
+  "condition": 3,
+  "grade": 7,
+  "sqft_above": 1800,
+  "sqft_basement": 200,
+  "yr_built": 1995,
+  "yr_renovated": 2010,
+  "zipcode": 98178,
+  "lat": 47.5112,
+  "long": -122.257,
+  "sqft_living15": 1500,
+  "sqft_lot15": 4000
+}'
+
 ## Conclusion
 Ce projet vise à fournir une solution robuste pour prédire le prix des maisons en utilisant des techniques de machine learning. Les résultats obtenus permettront de mieux comprendre les facteurs influençant les prix immobiliers et d'améliorer les prédictions pour des applications réelles.
