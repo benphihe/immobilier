@@ -6,12 +6,12 @@ from sklearn.tree import DecisionTreeRegressor
 import numpy as np
 from .processor_imo import HouseDataAnalyzer
 
-analyzer = HouseDataAnalyzer('../data/kc_house_data.csv')
+analyzer = HouseDataAnalyzer('./data/kc_house_data.csv')
 analyzer.load_and_prepare_data()
 
 class RegressionTree:
-    def __init__(self, show_plots=True):
-        self.df = analyzer.df
+    def __init__(self, show_plots=True, df=None):
+        self.df = df if df is not None else analyzer.df
         self.show_plots = show_plots
         self.x = self.df.drop("price", axis=1)
         self.y = self.df["price"]
@@ -27,6 +27,7 @@ class RegressionTree:
 
     def predict(self):
         self.y_pred = self.tree.predict(self.X_test)
+        return self.y_pred
 
     def evaluate_model(self, model=None):
         if model is None:

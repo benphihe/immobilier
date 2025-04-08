@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from .processor_imo import HouseDataAnalyzer
 
-analyzer = HouseDataAnalyzer('../data/kc_house_data.csv')
+analyzer = HouseDataAnalyzer('./data/kc_house_data.csv')
 analyzer.load_and_prepare_data()
 
 class RegressionLinear:
