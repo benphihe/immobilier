@@ -3,17 +3,20 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 class HouseDataAnalyzer:
-    def __init__(self, file_path):
+    def __init__(self, file_path=None, df=None):
         self.file_path = file_path
-        self.df = None
+        self.df = df
 
     def load_and_prepare_data(self):
-        self.df = pd.read_csv(self.file_path)
-        
+        if self.df is None and self.file_path is not None:
+            self.df = pd.read_csv(self.file_path)
+        print("1")
         self.df["price_per_sqft_living"] = self.df["price"] / self.df["sqft_living"]
+        print("2")
         self.df["AsBeenRenovated"] = self.df["yr_renovated"].apply(lambda x: 0 if x == 0 else 1)
-        
+        print("3")
         self.df = self.df.drop(['date'], axis=1)
+        print("4")
         self.df = self.df[self.df['price'] < self.df['price'].quantile(0.99)]
 
     def visualize_data(self):
